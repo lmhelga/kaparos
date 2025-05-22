@@ -1,0 +1,73 @@
+
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <title>Kaparós Sorsjegy</title>
+  <style>
+    body {
+      text-align: center;
+      font-family: Arial, sans-serif;
+      margin-top: 50px;
+      background: #f4f4f4;
+    }
+    #scratchCanvas {
+      border: 2px solid #ccc;
+      border-radius: 10px;
+      cursor: pointer;
+      background: url('peach_background_with_hearts.png') no-repeat center center;
+      background-size: cover;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Kaparj és nézd meg a nyereményed!</h1>
+
+  <canvas id="scratchCanvas" width="300" height="150"></canvas>
+  <div id="message"></div>
+
+  <script>
+    const canvas = document.getElementById("scratchCanvas");
+    const ctx = canvas.getContext("2d");
+
+    // Háttér (nyeremény szöveg)
+    const hiddenMessage = "🎉 99 Ft-ért Passion Dance 50 ml kölni + Raspberry 250 ml tusfürdő! 🎁";
+    ctx.fillStyle = "#000";
+    ctx.font = "16px Arial";
+    ctx.fillText(hiddenMessage, 10, 80);
+
+    // Kaparható réteg
+    const overlayCanvas = document.createElement("canvas");
+    overlayCanvas.width = canvas.width;
+    overlayCanvas.height = canvas.height;
+    const overlayCtx = overlayCanvas.getContext("2d");
+
+    overlayCtx.fillStyle = "#aaa";
+    overlayCtx.fillRect(0, 0, overlayCanvas.width, overlayCanvas.height);
+    overlayCtx.font = "20px Arial";
+    overlayCtx.fillStyle = "#000";
+    overlayCtx.fillText("Kaparj le!", 100, 80);
+
+    ctx.globalCompositeOperation = "destination-over";
+    ctx.drawImage(overlayCanvas, 0, 0);
+
+    let isDrawing = false;
+
+    canvas.addEventListener("mousedown", () => isDrawing = true);
+    canvas.addEventListener("mouseup", () => isDrawing = false);
+    canvas.addEventListener("mousemove", scratch);
+
+    function scratch(e) {
+      if (!isDrawing) return;
+      const rect = canvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      ctx.globalCompositeOperation = "destination-out";
+      ctx.beginPath();
+      ctx.arc(x, y, 15, 0, 2 * Math.PI);
+      ctx.fill();
+    }
+  </script>
+</body>
+</html>
